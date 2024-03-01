@@ -1,4 +1,4 @@
-package com.peer.servercommunication;
+package com.servercommunication;
 
 import java.util.List;
 
