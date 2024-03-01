@@ -6,7 +6,7 @@ public interface ServerCommunicatorInter {
 
     void createChattingRoom(String roomName, int maximum);
 
-    List<Peer> connectChattingRoom(String roomName);
+//    List<Peer> connectChattingRoom(String roomName);
 
     void disconnectChattingRoom();
 
