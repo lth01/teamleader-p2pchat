@@ -1,7 +1,10 @@
 package com.peer.connection;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.peer.info.PeerInfo;
 import com.peer.message.Message;
+import com.peer.peerservice.PeerService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,29 +12,42 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class Connection {
+public class Connection extends Thread{
+    private boolean threadFlag;
+    private PeerService ps;
     private Socket sc;
     private BufferedReader br;
     private ObjectMapper om;
-
     private PrintWriter pw;
+
+    private PeerInfo otherPeer;
 
     private Connection(){}
 
-    private Connection(Socket sc) {
+    private Connection(Socket sc, PeerService ps, PeerInfo peerInfo) {
         this.sc = sc;
+        this.ps = ps;
         try {
             this.br = new BufferedReader(new InputStreamReader(this.sc.getInputStream()));
             this.pw = new PrintWriter(this.sc.getOutputStream());
             this.om = new ObjectMapper();
+            this.otherPeer = peerInfo;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static Connection doConnect(Socket sc){
+    public PeerInfo getOtherPeer() {
+        return otherPeer;
+    }
+
+    public void setThreadFlag(boolean threadFlag) {
+        this.threadFlag = threadFlag;
+    }
+
+    public static Connection doConnect(Socket sc, PeerService ps, PeerInfo peerInfo){
         if(sc.isConnected()){
-            return new Connection(sc);
+            return new Connection(sc, ps, peerInfo);
         }else{
             return null;
         }
@@ -63,11 +79,30 @@ public class Connection {
      * @brief
      */
     public boolean writeMessage(Message msg){
-//        String jsonMsg = om.writeValueAsString(msg);
-
-//        pw.println(jsonMsg);
-//        pw.flush();
+		String jsonMsg = null;
+		try {
+			jsonMsg = om.writeValueAsString(msg);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+		pw.println(jsonMsg);
+        pw.flush();
         return false;
     }
 
+
+    @Override
+    public void run() {
+        threadFlag = true;
+        while(threadFlag){
+            try{
+                String response = br.readLine();
+                Message msg = om.readValue(response, Message.class);
+                ps.recvMessageFromPeer(msg);
+            }catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+        doDisConnect();
+    }
 }

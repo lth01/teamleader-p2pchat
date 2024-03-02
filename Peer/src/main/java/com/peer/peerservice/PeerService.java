@@ -1,11 +1,17 @@
 package com.peer.peerservice;
 
+
+import java.net.Socket;
+
+import com.peer.info.PeerInfo;
+import com.peer.message.Message;
+
 public interface PeerService {
-    boolean doConnection();
+    boolean doConnect(Socket sc, PeerInfo peerInfo);
 
     boolean doDisConnect();
 
-    boolean sendMessgeToPeer();
+    boolean sendMessgeToPeer(Message message);
 
-    boolean recvMessageFromPeer();
+    boolean recvMessageFromPeer(Message message);
 }
