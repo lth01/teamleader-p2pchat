@@ -15,7 +15,7 @@ public class HttpConnectionTest {
 
     @DisplayName("POST Request 전송 메소드 테스트")
     @Test
-    void sendPostRequestTest() throws MalformedURLException {
+    void sendPOSTRequestTest() throws MalformedURLException {
         URL testURL = new URL("https://webhook.site/0cc48f98-1e33-4428-aecd-b4671b53a667");
         Map<String, String> testData = new HashMap<>();
         testData.put("Test_ID", "10");
@@ -23,7 +23,17 @@ public class HttpConnectionTest {
         testData.put("Test_List", List.of(1, 2, 3, 4, 5).toString());
 
         Assertions.assertDoesNotThrow(() -> {
-            JsonNode response = HttpConnection.sendPostRequest(testURL, testData);
+            JsonNode response = HttpConnection.sendPOSTRequest(testURL, testData);
+        });
+    }
+
+    @DisplayName("GET Request 전송 메소드 테스트")
+    @Test
+    void sendGETRequestTest() throws MalformedURLException {
+        URL testURL = new URL("https://webhook.site/0cc48f98-1e33-4428-aecd-b4671b53a667");
+
+        Assertions.assertDoesNotThrow(() -> {
+            JsonNode response = HttpConnection.sendGETRequest(testURL);
         });
     }
 }
