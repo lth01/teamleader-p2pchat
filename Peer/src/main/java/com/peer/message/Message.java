@@ -6,7 +6,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type", visible = true)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = TalkMessage.class, name = "TALK"),
-        @JsonSubTypes.Type(value = DisconnectMessage.class, name = "DISCONNECT")
+        @JsonSubTypes.Type(value = DisconnectMessage.class, name = "DISCONNECT"),
+        @JsonSubTypes.Type(value = ConnectMessage.class, name = "CONNECT"),
+        @JsonSubTypes.Type(value = ConnectResponse.class, name = "CONNECTRESPONSE"),
+        @JsonSubTypes.Type(value = CreateMessage.class, name = "CREATEREQUEST"),
+        @JsonSubTypes.Type(value = ResultResponse.class, name = "RESULTRESPONSE"),
+        @JsonSubTypes.Type(value = CurrentChattingRoomResponse.class, name = "CURRENTCHATTINGROOMRESPONSE")
 })
 public abstract class Message {
     private String name;
