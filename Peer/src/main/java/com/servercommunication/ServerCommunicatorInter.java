@@ -1,14 +1,15 @@
 package com.servercommunication;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
 
 public interface ServerCommunicatorInter {
 
-    void createChattingRoom(String roomName, int maximum);
+    JsonNode createChattingRoom(String roomName, int maximum);
 
     List<Peer> connectChattingRoom(String roomName);
 
-    void disconnectChattingRoom();
+    JsonNode disconnectChattingRoom();
 
-    void getCurrentChattingRoom();
+    List<String> getCurrentChattingRoom();
 }
