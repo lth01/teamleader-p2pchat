@@ -4,11 +4,13 @@ import static com.util.Validation.validateIp;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @ToString
 public class Peer {
 
