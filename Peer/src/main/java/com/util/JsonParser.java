@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.servercommunication.Peer;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -43,6 +44,10 @@ public class JsonParser {
         return objectMapper.readTree(json);
     }
 
+    public static Peer convertJsonNodeToPeer(JsonNode json) throws JsonProcessingException {
+        return objectMapper.readValue(json.toString(), Peer.class);
+    }
+
     /**
      * <p>Map 데이터를 JsonNode 객체로 변환시키는 메소드</p>
      *
@@ -52,7 +57,7 @@ public class JsonParser {
     public static JsonNode getJsonNode(Map<String, String> data) {
         ObjectNode retVal = objectMapper.createObjectNode();
 
-        for(Entry<String, String> entry : data.entrySet()) {
+        for (Entry<String, String> entry : data.entrySet()) {
             retVal.put(entry.getKey(), entry.getValue());
         }
 
