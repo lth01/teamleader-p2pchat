@@ -49,6 +49,37 @@ public class JsonParserTest {
         }));
     }
 
+    @DisplayName("convertJsonNodeToPeer() 메소드 테스트")
+    @Test
+    void convertJsonNodeToPeerTest() {
+        List<Map<String, String>> testMaps = new ArrayList<>();
+        List<String> testIp = List.of("1.1.1.1", "127.0.0.1", "83.23.103.64", "79.24.123.52",
+            "192.108.111.10");
+        List<String> testPort = List.of("8080", "5069", "10050", "10042", "5390");
+
+        for (int i = 0; i < testIp.size(); i++) {
+            Map<String, String> peer = new HashMap<>();
+            peer.put("nickname", "test" + (i + 1));
+            peer.put("ip", testIp.get(i));
+            peer.put("port", testPort.get(i));
+            testMaps.add(peer);
+        }
+
+        for (int i = 0; i < testMaps.size(); i++) {
+            Map<String, String> peer = testMaps.get(i);
+            JsonNode jsonNode = JsonParser.getJsonNode(peer);
+            String ip = testIp.get(i);
+            int port = Integer.parseInt(testPort.get(i));
+
+            Assertions.assertDoesNotThrow(() -> {
+                Peer convertedPeer = JsonParser.convertJsonNodeToPeer(jsonNode);
+
+                Assertions.assertEquals(convertedPeer.getIp(), ip);
+                Assertions.assertEquals(convertedPeer.getPort(), port);
+            });
+        }
+    }
+
     @DisplayName("getJsonNode() 메소드 테스트")
     @Test
     void getJsonNodeTest() {
