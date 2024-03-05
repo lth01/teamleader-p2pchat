@@ -106,30 +106,37 @@ public class JsonParser {
         return retVal;
     }
 
+    // Json String을 ConnectMessage 객체로 변환
     private static ConnectMessage convertJsonStringToConnectMessage(String json) throws JsonProcessingException {
         return objectMapper.readValue(json, ConnectMessage.class);
     }
 
+    // Json String을 ConnectResponse 객체로 변환
     private static ConnectResponse convertJsonStringToConnectResponse(String json) throws JsonProcessingException {
         return objectMapper.readValue(json, ConnectResponse.class);
     }
 
+    // Json String을 CreateMessage 객체로 변환
     private static CreateMessage convertJsonStringToCreateMessage(String json) throws JsonProcessingException {
         return objectMapper.readValue(json, CreateMessage.class);
     }
 
+    // Json String을 CurrentChattingRoomResponse 객체로 변환
     private static CurrentChattingRoomResponse convertJsonStringToCurrentChattingRoomResponse(String json) throws JsonProcessingException {
         return objectMapper.readValue(json, CurrentChattingRoomResponse.class);
     }
 
+    // Json String을 DisconnectMessage 객체로 변환
     private static DisconnectMessage convertJsonStringToDisconnectMessage(String json) throws JsonProcessingException {
         return objectMapper.readValue(json, DisconnectMessage.class);
     }
 
+    // Json String을 TalkMessage 객체로 변환
     private static TalkMessage convertJsonStringToTalkMessage(String json) throws JsonProcessingException {
         return objectMapper.readValue(json, TalkMessage.class);
     }
 
+    // Json String을 ResultResponse 객체로 변환
     private static ResultResponse convertJsonStringToResultResponse(String json) throws JsonProcessingException {
         return objectMapper.readValue(json, ResultResponse.class);
     }
