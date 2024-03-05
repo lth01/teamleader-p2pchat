@@ -1,7 +1,6 @@
 package com.servercommunication;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.util.JsonParser;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,8 +10,8 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import com.message.Message;
+import com.message.ResultResponse;
 
 public class HttpConnection {
 
@@ -20,17 +19,20 @@ public class HttpConnection {
     private static PrintWriter wr = null;
     private static BufferedReader br = null;
 
+    // 생성자 사용 방지
+    private HttpConnection() {}
+
     /**
      * <p>Key-Value 형식의 데이터를 Json 포멧으로 변경 후 이 데이터를 서버 URL로 POST Request를 보냅니다.</p>
-     * <p>만약 전송 도중 문제가 생겼을 경우 "Error"와 "Error 내용"을 Key-Value로 가지는 Json을 반환합니다.</p>
-     * <p>전송이 성공적으로 이루어졌다면 서버의 Response를 Json으로 반환합니다.</p>
+     * <p>만약 전송 도중 문제가 생겼을 경우 "Error"와 "Error 내용"을 Key-Value로 가지는 String을 반환합니다.</p>
+     * <p>전송이 성공적으로 이루어졌다면 서버의 Response를 String으로 반환합니다.</p>
      *
      * @param serverURL POST Method로 Request를 보내고자 하는 서버의 URL
      * @param data      보내고자 하는 데이터
-     * @return Json 형식의 서버 Response
+     * @return 서버 Response String
      */
-    public static JsonNode sendPOSTRequest(URL serverURL, Map<String, String> data) {
-        JsonNode response = null;
+    public static String sendPOSTRequest(URL serverURL, Message data) {
+        String response = null;
 
         try {
             // HttpURLConnection 객체 기본 설정 및 서버로 데이터를 보내기 위한 PrintWriter 객체 생성
@@ -40,6 +42,11 @@ public class HttpConnection {
             wr.write(JsonParser.convertObjectToJsonString(data));
             wr.close();
 
+            // Http 통신이 원활하게 이루어지지 않았다면 예외 발생
+            if (!isConnectOk()) {
+                throw new IOException("Http Status Code: " + httpURLConnection.getResponseMessage());
+            }
+
             // 서버의 응답을 받기 위한 BufferedReader 객체 생성
             br = new BufferedReader(
                 new InputStreamReader(httpURLConnection.getInputStream(), StandardCharsets.UTF_8));
@@ -48,10 +55,7 @@ public class HttpConnection {
             response = getResponse();
         } catch (IOException e) {
             // 만약 도중 문제가 생겼다면 { "Error": e.getMessage() } 로 Json을 만든다.
-            Map<String, String> error = new HashMap<>();
-            error.put("Error", e.getMessage());
-
-            response = JsonParser.getJsonNode(error);
+            response = "{ \"Status\": \"" + e.getMessage() +"\" }";
         } finally {
             // 사용된 BufferedReader 객체를 닫고 Disconnect한다.
             try {
@@ -65,18 +69,23 @@ public class HttpConnection {
 
     /**
      * <p>서버의 URL로 GET Request를 보냅니다.</p>
-     * <p>만약 전송 도중 문제가 생겼을 경우 "Error"와 "Error 내용"을 Key-Value로 가지는 Json을 반환합니다.</p>
-     * <p>전송이 성공적으로 이루어졌다면 서버의 Response를 Json으로 반환합니다.</p>
+     * <p>만약 전송 도중 문제가 생겼을 경우 "Error"와 "Error 내용"을 Key-Value로 가지는 String을 반환합니다.</p>
+     * <p>전송이 성공적으로 이루어졌다면 서버의 Response를 String으로 반환합니다.</p>
      *
      * @param serverURL GET Method로 Request를 보내고자 하는 서버의 URL
-     * @return Json 형식의 서버 Response
+     * @return 서버 Response String
      */
-    public static JsonNode sendGETRequest(URL serverURL) {
-        JsonNode response = null;
+    public static String sendGETRequest(URL serverURL) {
+        String response = null;
 
         try {
             setFieldsGET(serverURL);
             httpURLConnection.connect();
+
+            // Http 통신이 원활하게 이루어지지 않았다면 예외 발생
+            if (!isConnectOk()) {
+                throw new IOException("Http Status Code: " + httpURLConnection.getResponseMessage());
+            }
 
             // 서버의 응답을 받기 위한 BufferedReader 객체 생성
             br = new BufferedReader(
@@ -85,10 +94,7 @@ public class HttpConnection {
             response = getResponse();
         } catch (IOException e) {
             // 만약 도중 문제가 생겼다면 { "Error": e.getMessage() } 로 Json을 만든다.
-            Map<String, String> error = new HashMap<>();
-            error.put("Error", e.getMessage());
-
-            response = JsonParser.getJsonNode(error);
+            response = "{ \"Status\": \"" + e.getMessage() +"\" }";
         } finally {
             // 사용된 BufferedReader 객체를 닫고 Disconnect한다.
             try {
@@ -138,8 +144,8 @@ public class HttpConnection {
         br.close();
     }
 
-    // 서버에게 받은 Response를 Json으로 변환시켜 반환하는 메소드
-    private static JsonNode getResponse() throws JsonProcessingException {
+    // 서버에게 받은 Response를 String으로 반환하는 메소드
+    private static String getResponse() throws JsonProcessingException {
         StringBuffer response = new StringBuffer();
 
         try {
@@ -153,6 +159,16 @@ public class HttpConnection {
             response.append("\"Error\": \"").append(e.getMessage()).append("\"");
         }
 
-        return JsonParser.convertJsonStringToJsonNode(response.toString());
+        return response.toString();
+    }
+
+    private static boolean isConnectOk() throws IOException {
+        int statusCode = httpURLConnection.getResponseCode();
+        return (statusCode == HttpURLConnection.HTTP_OK
+            || statusCode == HttpURLConnection.HTTP_NOT_MODIFIED);
+    }
+
+    private static ResultResponse handleException(Exception e) {
+        return new ResultResponse(e.getMessage());
     }
 }
