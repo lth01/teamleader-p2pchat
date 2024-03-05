@@ -1,12 +1,14 @@
 package com.servercommunicatorTest;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.message.ConnectMessage;
+import com.message.CreateMessage;
+import com.message.DisconnectMessage;
+import com.message.Message;
+import com.message.TalkMessage;
 import com.servercommunication.HttpConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,13 +19,15 @@ public class HttpConnectionTest {
     @Test
     void sendPOSTRequestTest() throws MalformedURLException {
         URL testURL = new URL("https://webhook.site/0cc48f98-1e33-4428-aecd-b4671b53a667");
-        Map<String, String> testData = new HashMap<>();
-        testData.put("Test_ID", "10");
-        testData.put("Test_text", "This is Test Text");
-        testData.put("Test_List", List.of(1, 2, 3, 4, 5).toString());
+        List<Message> testData = List.of(new ConnectMessage("test1", "room1"),
+            new CreateMessage("test2", "room2", 4),
+            new DisconnectMessage("test3", "test3 disconnect"),
+            new TalkMessage("test4", 5, "This is a test data"),
+            new CreateMessage("test5", "room5", 0));
 
-        Assertions.assertDoesNotThrow(() -> {
-            JsonNode response = HttpConnection.sendPOSTRequest(testURL, testData);
+        testData.forEach(message -> {
+            Assertions.assertDoesNotThrow(
+                () -> HttpConnection.sendPOSTRequest(testURL, message));
         });
     }
 
@@ -32,8 +36,8 @@ public class HttpConnectionTest {
     void sendGETRequestTest() throws MalformedURLException {
         URL testURL = new URL("https://webhook.site/0cc48f98-1e33-4428-aecd-b4671b53a667");
 
-        Assertions.assertDoesNotThrow(() -> {
-            JsonNode response = HttpConnection.sendGETRequest(testURL);
-        });
+        for (int i = 0; i < 5; i++) {
+            Assertions.assertDoesNotThrow(() -> HttpConnection.sendGETRequest(testURL));
+        }
     }
 }
