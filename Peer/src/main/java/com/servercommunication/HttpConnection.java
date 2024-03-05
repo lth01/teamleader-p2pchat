@@ -55,7 +55,7 @@ public class HttpConnection {
             response = getResponse();
         } catch (IOException e) {
             // 만약 도중 문제가 생겼다면 { "Error": e.getMessage() } 로 Json을 만든다.
-            response = "{ \"Status\": \"" + e.getMessage() +"\" }";
+            response = "{ \"status\": \"" + e.getMessage() +"\" }";
         } finally {
             // 사용된 BufferedReader 객체를 닫고 Disconnect한다.
             try {
@@ -94,7 +94,7 @@ public class HttpConnection {
             response = getResponse();
         } catch (IOException e) {
             // 만약 도중 문제가 생겼다면 { "Error": e.getMessage() } 로 Json을 만든다.
-            response = "{ \"Status\": \"" + e.getMessage() +"\" }";
+            response = "{ \"status\": \"" + e.getMessage() +"\" }";
         } finally {
             // 사용된 BufferedReader 객체를 닫고 Disconnect한다.
             try {
