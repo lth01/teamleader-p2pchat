@@ -1,6 +1,14 @@
 package com.utilTest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.message.ConnectMessage;
+import com.message.ConnectResponse;
+import com.message.CreateMessage;
+import com.message.CurrentChattingRoomResponse;
+import com.message.DisconnectMessage;
+import com.message.Message;
+import com.message.ResultResponse;
+import com.message.TalkMessage;
 import com.servercommunication.Peer;
 import com.util.JsonParser;
 import java.util.ArrayList;
@@ -98,5 +106,64 @@ public class JsonParserTest {
         Assertions.assertEquals("10", testNode.get("ID").asText());
         Assertions.assertEquals("[1, 2, 3, 4, 5]", testNode.get("Test_List").asText());
 
+    }
+
+    @DisplayName("convertJsonStringToMessage() 메소드 테스트")
+    @Test
+    void convertJsonStringToMessageTest() {
+        String test1 = "{\"name\":\"test1\","
+            + "\"type\":\"CONNECT\","
+            + "\"roomName\":\"test room 1\"}";
+        String test2 = "{\"name\":\"\","
+            + "\"type\":\"CONNECTRESPONSE\","
+            + "\"peer\":[{\"nickname\":\"test2\",\"ip\":\"1.2.3.4\",\"port\":10030},"
+            + "{\"nickname\":\"test3\",\"ip\":\"190.108.23.56\",\"port\":8080},"
+            + "{\"nickname\":\"test4\",\"ip\":\"255.255.255.255\",\"port\":3818}]}";
+        String test5 = "{\"name\":\"test5\","
+            + "\"type\":\"CREATEREQUEST\","
+            + "\"roomName\":\"test room 2\","
+            + "\"maximum\":8}";
+        String test6 = "{\"name\":\"test6\","
+            + "\"type\":\"CURRENTCHATTINGROOMRESPONSE\","
+            + "\"rooms\":[\"test room 1\",\"test room 2\",\"test room 3\",\"test room 4\",\"test room 5\"]}";
+        String test7 = "{\"name\":\"test7\","
+            + "\"type\":\"DISCONNECT\","
+            + "\"message\":\"Disconnect complete\"}";
+        String test8 = "{\"name\":\"test8\","
+            + "\"name\":\"test8\","
+            + "\"type\":\"TALK\","
+            + "\"sendTime\":12343.121,"
+            + "\"message\":\"Hello?\"}";
+        String test9 = "{\"name\":\"test9\","
+            + "\"type\":\"RESULTRESPONSE\","
+            + "\"status\":\"Done\"}";
+        String test10 = "{\"name\":\"test10\","
+            + "\"type\":\"RESULTRESPONSE\","
+            + "\"status\":\"Error : 404\"}";
+
+        Map<String, String> testMap = new HashMap<>();
+        testMap.put("ConnectMessage", test1);
+        testMap.put("ConnectResponse", test2);
+        testMap.put("CreateMessage", test5);
+        testMap.put("CurrentChattingRoomResponse", test6);
+        testMap.put("DisconnectMessage", test7);
+        testMap.put("TalkMessage", test8);
+        testMap.put("ResultResponse", test9);
+        testMap.put("NotMessage", test10);
+
+        testMap.forEach((key, value) -> {
+            Assertions.assertDoesNotThrow(() -> {
+                Message json = JsonParser.convertJsonStringToMessage(value, key);
+                if (!(json instanceof ConnectMessage
+                    || json instanceof ConnectResponse
+                    || json instanceof CreateMessage
+                    || json instanceof CurrentChattingRoomResponse
+                    || json instanceof DisconnectMessage
+                    || json instanceof TalkMessage
+                    || json instanceof ResultResponse)) {
+                    throw new Exception();
+                }
+            });
+        });
     }
 }
