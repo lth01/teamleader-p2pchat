@@ -42,4 +42,3 @@ public abstract class Message {
         this.type = type;
     }
 }
-

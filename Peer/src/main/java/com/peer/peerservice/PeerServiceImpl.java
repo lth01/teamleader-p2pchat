@@ -7,10 +7,7 @@ import java.util.List;
 
 import com.peer.connection.Connection;
 import com.peer.info.PeerInfo;
-import com.peer.message.DisconnectMessage;
-import com.peer.message.Message;
-import com.peer.message.MessageType;
-import com.peer.message.TalkMessage;
+import com.peer.message.*;
 
 public class PeerServiceImpl implements PeerService{
 	private List<Connection> connections;
@@ -24,13 +21,15 @@ public class PeerServiceImpl implements PeerService{
 	public boolean doConnect(Socket sc, PeerInfo peerInfo) {
 		Connection newConnection = Connection.doConnect(sc, this, peerInfo);
 		connections.add(newConnection);
+		newConnection.writeMessage(new ConnectMessage("",""));
 		return false;
 	}
 
 	@Override
 	public boolean doDisConnect() {
 		for(Connection connection : connections){
-			connection.interrupt();
+			connection.writeMessage(new DisconnectMessage("",""));
+			connection.doDisConnect();
 		}
 		return false;
 	}
