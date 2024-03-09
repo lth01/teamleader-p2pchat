@@ -1,10 +1,7 @@
 package com.servercommunicatorTest;
 
-import com.message.ConnectMessage;
-import com.message.CreateMessage;
-import com.message.DisconnectMessage;
-import com.message.Message;
-import com.message.TalkMessage;
+
+import com.peer.message.*;
 import com.servercommunication.HttpConnection;
 import java.net.MalformedURLException;
 import java.net.URL;

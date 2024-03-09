@@ -1,11 +1,12 @@
 package com.servercommunication;
 
+import com.peer.info.PeerInfo;
+import com.peer.message.*;
 import com.util.JsonParser;
 import com.util.Validation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import com.message.*;
 
 public class ServerCommunicator implements ServerCommunicatorInter {
 

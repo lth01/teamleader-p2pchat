@@ -1,5 +1,7 @@
 package com.servercommunication;
 
+import com.peer.info.PeerInfo;
+
 import java.util.List;
 
 public interface ServerCommunicatorInter {

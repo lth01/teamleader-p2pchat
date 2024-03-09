@@ -1,6 +1,7 @@
 package com.servercommunication;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.peer.message.Message;
 import com.util.JsonParser;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,8 +11,6 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import com.message.Message;
-import com.message.ResultResponse;
 
 public class HttpConnection {
 
