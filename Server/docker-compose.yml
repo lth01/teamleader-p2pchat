@@ -1,0 +1,23 @@
+services:
+    postgres:
+        platform: linux/x86_64
+        image: 'postgres:latest'
+        environment:
+            - 'POSTGRES_DB=test'
+            - 'POSTGRES_PASSWORD=root'
+            - 'POSTGRES_USER=postgres'
+
+        ports:
+            - '10055:5432'
+        restart: always
+        container_name: postgres_local
+        volumes:
+            - ./docker/postgres/data:/var/lib/postgresql/data
+
+volumes:
+    postgresql:
+        driver: local
+    db_data:
+
+    kafka_data:
+        driver: local
