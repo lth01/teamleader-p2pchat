@@ -2,6 +2,7 @@ package com.servercommunication;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.peer.message.Message;
+import com.peer.message.ResultResponse;
 import com.util.JsonParser;
 import java.io.BufferedReader;
 import java.io.IOException;

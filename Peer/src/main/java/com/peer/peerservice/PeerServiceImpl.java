@@ -1,5 +1,7 @@
 package com.peer.peerservice;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +15,7 @@ public class PeerServiceImpl implements PeerService{
 	private List<Connection> connections;
 
 
-	public PeerServiceImpl(){
+	public PeerServiceImpl(ServerSocket sc){
 		connections = Collections.synchronizedList(new ArrayList<>());
 	}
 
@@ -22,6 +24,7 @@ public class PeerServiceImpl implements PeerService{
 		Connection newConnection = Connection.doConnect(sc, this, peerInfo);
 		connections.add(newConnection);
 		newConnection.writeMessage(new ConnectMessage("",""));
+		newConnection.run();
 		return false;
 	}
 
@@ -73,5 +76,4 @@ public class PeerServiceImpl implements PeerService{
 		System.out.println("상대방 닉네임: " + message.getName());
 		System.out.println("메세지: " + message.getMessage());
 	}
-
 }
