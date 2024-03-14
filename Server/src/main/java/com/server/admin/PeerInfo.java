@@ -14,13 +14,13 @@ public class PeerInfo {
     private Long id;
     private String nickname;
     private String ip;
-    private int port;
+    private Integer port;
     private Long currentChattingRoomId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @Builder
-    public PeerInfo(String nickname, String ip, int port, Long currentChattingRoomId) {
+    public PeerInfo(String nickname, String ip, Integer port, Long currentChattingRoomId) {
         this.nickname = nickname;
         this.ip = ip;
         this.port = port;
