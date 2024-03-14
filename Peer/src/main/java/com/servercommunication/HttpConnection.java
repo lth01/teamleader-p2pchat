@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.Inet4Address;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import com.message.Message;
@@ -109,6 +110,7 @@ public class HttpConnection {
     // HttpURLConnection 객체 기본 설정 및 서버로 데이터를 보내기 위한 PrintWriter 객체 생성 메소드
     // 인자로 받은 URL로 Connection을 열고 POST Method로 설정한다.
     // HTTP Header로 Content-Type과 Accept, Accept-Encoding을 설정하고
+    // 사용자 IP와 Port 번호를 Header에 추가한다.
     // Connect Timeout은 5초로 설정한다.
     // POST로 데이터를 보내주기 위해 doOutput 필드를 true로 설정한다.
     private static void setFieldsPOST(URL serverURL) throws IOException {
@@ -117,6 +119,8 @@ public class HttpConnection {
         httpURLConnection.setRequestProperty("Content-Type", "application/json");
         httpURLConnection.setRequestProperty("Accept", "application/json");
         httpURLConnection.setRequestProperty("Accept-Encoding", "UTF-8");
+        httpURLConnection.setRequestProperty("X-Forward-For", Inet4Address.getLocalHost().getHostAddress());
+        httpURLConnection.setRequestProperty("X-Forward-Port", "3001");
         httpURLConnection.setConnectTimeout(5000);
         httpURLConnection.setDoOutput(true);
 
@@ -128,6 +132,7 @@ public class HttpConnection {
     // HttpURLConnection 객체 기본 설정 메소드
     // 인자로 받은 URL로 Connection을 열고 GET Method로 설정한다.
     // HTTP Header로 Content-Type과 Accept, Accept-Encoding을 설정하고
+    // 사용자 IP와 Port 번호를 Header에 추가한다.
     // Connect Timeout은 5초로 설정한다.
     private static void setFieldsGET(URL serverURL) throws IOException {
         httpURLConnection = (HttpURLConnection) serverURL.openConnection();
@@ -135,13 +140,20 @@ public class HttpConnection {
         httpURLConnection.setRequestProperty("Content-Type", "application/json");
         httpURLConnection.setRequestProperty("Accept", "application/json");
         httpURLConnection.setRequestProperty("Accept-Encoding", "UTF-8");
+        httpURLConnection.setRequestProperty("X-Forward-For", Inet4Address.getLocalHost().getHostAddress());
+        httpURLConnection.setRequestProperty("X-Forward-Port", "3001");
         httpURLConnection.setConnectTimeout(5000);
     }
 
     // 다 사용된 객체를 닫고 Disconnect하는 메소드
     private static void closeFields() throws IOException {
-        httpURLConnection.disconnect();
-        br.close();
+        if (httpURLConnection != null) {
+            httpURLConnection.disconnect();
+        }
+
+        if (br != null) {
+            br.close();
+        }
     }
 
     // 서버에게 받은 Response를 String으로 반환하는 메소드
@@ -165,6 +177,7 @@ public class HttpConnection {
     private static boolean isConnectOk() throws IOException {
         int statusCode = httpURLConnection.getResponseCode();
         return (statusCode == HttpURLConnection.HTTP_OK
+            || statusCode == HttpURLConnection.HTTP_CREATED
             || statusCode == HttpURLConnection.HTTP_NOT_MODIFIED);
     }
 
