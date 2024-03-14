@@ -1,5 +1,6 @@
 package com.server.service;
 
+import com.server.repository.ChattingRoomRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -7,5 +8,5 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class ChattingRoomService {
 
-    private final ChattingRoomService chattingRoomService;
+    private final ChattingRoomRepository chattingRoomRepository;
 }
