@@ -12,7 +12,7 @@ public interface PeerInfoMapper {
 
     Optional<PeerInfo> getPeerInfo(PeerInfo peerInfo);
 
-    List<PeerInfo> getPeerInfosByChattingRoomId(String chattingRoomId);
+    List<PeerInfo> getPeerInfosByChattingRoomId(Long chattingRoomId);
 
     Integer savePeerInfo(PeerInfo peerInfo);
 
