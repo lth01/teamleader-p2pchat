@@ -16,11 +16,11 @@
         <setting name="defaultStatementTimeout" value="120"/>
     </settings>
 
-<!--    <typeAliases>-->
-<!--        <typeAlias alias="PropertyReservationOption" type="com.server."/>-->
-
-<!--        <package name="com.example.model.dto"/>-->
-<!--    </typeAliases>-->
+    <typeAliases>
+        <typeAlias type="com.server.admin.PeerInfo" alias="PeerInfo"/>
+        <typeAlias type="com.server.admin.ChattingRoom" alias="ChattingRoom"/>
+        <package name="com.server.admin"/>
+    </typeAliases>
 
     <typeHandlers>
         <typeHandler handler="org.apache.ibatis.type.LocalDateTimeTypeHandler"/>
