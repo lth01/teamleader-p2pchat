@@ -3,5 +3,61 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.server.repository.mappers.PeerInfoMapper">
+    <select id="getAllPeerInfo" resultType="PeerInfo">
+        SELECT *
+        FROM peer_info
+    </select>
 
+    <select id="getPeerInfo" resultType="PeerInfo" parameterType="PeerInfo">
+        SELECT *
+        FROM peer_info
+        WHERE
+            <choose>
+                <when test="id != null">id = #{id}</when>
+                <when test="id == null and nickname != null">nickname = #{nickname}</when>
+                <otherwise>false</otherwise>
+            </choose>
+    </select>
+
+    <select id="getPeerInfosByChattingRoomId" resultType="PeerInfo" parameterType="Long">
+        SELECT *
+        FROM peer_info
+        WHERE chatting_room_id = #{chattingRoomId}
+    </select>
+
+    <insert id="savePeerInfo" flushCache="true" parameterType="PeerInfo">
+        INSERT INTO peer_info(nickname, ip, port, current_chatting_room_id, created_at, updated_at)
+        VALUES (#{nickname}, #{ip}, #{port}, #{currentChattingRoomId}, now(), now())
+    </insert>
+
+    <update id="updatePeerInfo" flushCache="true" parameterType="PeerInfo">
+        UPDATE peer_info
+        <set>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="port != null">port = #{port},</if>
+            <if test="currentChattingRoomId != null">current_chatting_room_id = #{currentChattingRoomId}, </if>
+            updated_at = now()
+        </set>
+        <where>
+            <if test="id != null">id = #{id}</if>
+            <if test="nickname != null">and nickname = #{nickname}</if>
+        </where>
+    </update>
+
+    <delete id="deletePeerInfo" flushCache="true" parameterType="PeerInfo">
+        DELETE FROM peer_info
+        WHERE
+            <choose>
+                <when test="id != null">id = #{id}</when>
+                <when test="id == null and nickname != null">nickname = #{nickname}</when>
+                <otherwise>false</otherwise>
+            </choose>
+    </delete>
+
+    <select id="isExistNicknameInChattingRoom" resultType="Boolean" parameterType="PeerInfo">
+        SELECT EXISTS(SELECT 1
+                      FROM peer_info
+                      WHERE nickname = #{nickname} and current_chatting_room_id = #{currentChattingRoomId})
+    </select>
 </mapper>
