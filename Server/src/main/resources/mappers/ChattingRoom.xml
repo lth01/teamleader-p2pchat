@@ -3,5 +3,58 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.server.repository.mappers.ChattingRoomMapper">
+    <select id="getAllChattingRoom" resultType="ChattingRoom">
+        SELECT *
+        FROM chatting_room
+    </select>
 
+    <select id="getChattingRoom" resultType="ChattingRoom" parameterType="ChattingRoom">
+        SELECT *
+        FROM chatting_room
+        WHERE
+            <choose>
+                <when test="id != null">id = #{id}</when>
+                <when test="id == null and roomName != null">room_name = #{roomName}</when>
+                <otherwise>false</otherwise>
+            </choose>
+    </select>
+
+    <insert id="createChattingRoom" flushCache="true" parameterType="ChattingRoom">
+        INSERT INTO chatting_room(room_name, maximum, current_peers, created_at, updated_at)
+        VALUES (#{roomName}, #{maximum}, 0, now(), now())
+    </insert>
+
+    <update id="updateChattingRoomInfo" flushCache="true" parameterType="ChattingRoom">
+        UPDATE chatting_room
+        <set>
+            <if test="roomName != null">room_name = #{roomName},</if>
+            <if test="maximum != null">maximum = #{maximum},</if>
+            <if test="currentPeers != null">current_peers = #{currentPeers}</if>
+            updated_at = now()
+        </set>
+        <where>
+            <if test="id != null">id = #{id}</if>
+            <if test="roomName != null">and room_name = #{roomName}</if>
+            <if test="currentPeers != null">and maximum >= #{currentPeers}</if>
+        </where>
+    </update>
+
+    <delete id="deleteChattingRoom" flushCache="true" parameterType="String">
+        DELETE FROM chatting_room
+        WHERE
+            <choose>
+                <when test="roomName != null">room_name = #{roomName}</when>
+                <otherwise>false</otherwise>
+            </choose>
+    </delete>
+
+    <select id="isExistChattingRoom" resultType="Boolean" parameterType="String">
+        SELECT EXISTS(SELECT 1
+                      FROM chatting_room
+                      WHERE
+                          <choose>
+                              <when test="roomName != null">room_name = #{roomName}</when>
+                              <otherwise>false</otherwise>
+                          </choose>)
+    </select>
 </mapper>
